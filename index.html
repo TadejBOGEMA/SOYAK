@@ -1,80 +1,17 @@
-<!DOCTYPE html>
-<html lang="sl">
-<head>
-  <meta charset="UTF-8">
-  <title>GIS pregledovalnik – verzija z ortofotom</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <style>
-    html, body { height: 100%; margin: 0; padding: 0; }
-    #map { height: 100%; width: 100%; }
-    .leaflet-control-layers-expanded {
-      background: white;
-      border-radius: 8px;
-      padding: 6px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    }
-  </style>
-</head>
-<body>
-  <div id="map"></div>
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script>
-    // Ustvari karto
-    const map = L.map('map', {
-      center: [46.05, 14.5],
-      zoom: 8
-    });
+// ... obstoječa koda za mapo in sloje ...
 
-    // Osnovni sloji
-    const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '© OpenStreetMap prispevkarji'
-    }).addTo(map);
+const inspOrotofoto = L.tileLayer.wms(
+  'https://storitve.eprostor.gov.si/ows-ins-wms/oi/ows/ows',
+  {
+    layers: 'OI',   // preveri, če je točno ime sloja “OI” ali drugo
+    format: 'image/png',
+    transparent: true,
+    attribution: 'INSPIRE Ortofoto (E-prostor)'
+  }
+);
 
-    const topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-      maxZoom: 17,
-      attribution: '© OpenTopoMap (CC-BY-SA)'
-    });
-
-    const esriSat = L.tileLayer(
-      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-      {
-        maxZoom: 19,
-        attribution: 'Tiles © Esri'
-      }
-    );
-
-    const sentinel = L.tileLayer(
-      'https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2021_3857/default/g/{z}/{y}/{x}.jpg',
-      {
-        maxZoom: 12,
-        attribution: 'Sentinel-2 cloudless © ESA / EOX'
-      }
-    );
-
-    // DOF025 ortofoto (Slovenija) kot TMS ploščice
-    const orthophotoDOF025 = L.tileLayer(
-      'https://gis.level2.si/geoserver/gwc/service/tms/1.0.0/level2%3ADOF025_latest@EPSG%3A3857@jpeg/{z}/{x}/{-y}.jpeg',
-      {
-        maxZoom: 20,
-        attribution: 'DOF025 – GURS / Level2'
-      }
-    );
-
-    // Skupine slojev
-    const baseLayers = {
-      "OpenStreetMap": osm,
-      "Topografska (OpenTopoMap)": topo,
-      "Satelitska (ESRI)": esriSat
-    };
-
-    const overlays = {
-      "Sentinel-2 (ESA)": sentinel,
-      "Ortofoto DOF025 (SI)": orthophotoDOF025
-    };
-
-    L.control.layers(baseLayers, overlays, { collapsed: false }).addTo(map);
-    L.control.scale({imperial: false}).addTo(map);
-  </script>
-</body>
-</html>
+// nato v control.layers:
+const overlays = {
+  "Ortofoto INSPIRE": inspOrotofoto,
+  // ... drugi sloji ...
+};
