@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <title>Testni GIS pregledovalnik</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    html, body { height: 100%; margin: 0; padding: 0; }
+    #map { height: 100%; width: 100%; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map').setView([46.05, 14.5], 8);
+    const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:'© OpenStreetMap', maxZoom:19 }).addTo(map);
+    const natura = L.tileLayer.wms('https://gis.arso.gov.si/arcgis/services/Okolje/Natura2000/MapServer/WMSServer', {
+      layers:'0', format:'image/png', transparent:true, attribution:'ARSO'
+    });
+    const parcele = L.tileLayer.wms('https://prostor.gov.si/ows2-maps/ows?service=WMS', {
+      layers:'SI.GURS.RPE.PARCELA', format:'image/png', transparent:true, attribution:'GURS'
+    });
+    const ortofoto = L.tileLayer.wms('https://prostor.gov.si/ows2-maps/ows?service=WMS', {
+      layers:'DOF050', format:'image/png', transparent:true, attribution:'GURS DOF'
+    });
+    L.control.layers({"OSM":osm}, {"Natura 2000":natura, "Parcele":parcele, "Ortofoto":ortofoto}, {collapsed:false}).addTo(map);
+    L.control.scale({imperial:false}).addTo(map);
+  </script>
+</body>
+</html>
