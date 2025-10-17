@@ -2,7 +2,7 @@
 <html lang="sl">
 <head>
   <meta charset="UTF-8">
-  <title>GIS pregledovalnik – delujoča verzija</title>
+  <title>GIS pregledovalnik – verzija z ortofotom</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <style>
     html, body { height: 100%; margin: 0; padding: 0; }
@@ -17,7 +17,6 @@
 </head>
 <body>
   <div id="map"></div>
-
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
     // Ustvari karto
@@ -45,7 +44,6 @@
       }
     );
 
-    // Sentinel Hub sloj (prek javnega vira Copernicus)
     const sentinel = L.tileLayer(
       'https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2021_3857/default/g/{z}/{y}/{x}.jpg',
       {
@@ -54,7 +52,16 @@
       }
     );
 
-    // Kontrola slojev
+    // DOF025 ortofoto (Slovenija) kot TMS ploščice
+    const orthophotoDOF025 = L.tileLayer(
+      'https://gis.level2.si/geoserver/gwc/service/tms/1.0.0/level2%3ADOF025_latest@EPSG%3A3857@jpeg/{z}/{x}/{-y}.jpeg',
+      {
+        maxZoom: 20,
+        attribution: 'DOF025 – GURS / Level2'
+      }
+    );
+
+    // Skupine slojev
     const baseLayers = {
       "OpenStreetMap": osm,
       "Topografska (OpenTopoMap)": topo,
@@ -62,14 +69,12 @@
     };
 
     const overlays = {
-      "Sentinel-2 (ESA, 2021)": sentinel
+      "Sentinel-2 (ESA)": sentinel,
+      "Ortofoto DOF025 (SI)": orthophotoDOF025
     };
 
     L.control.layers(baseLayers, overlays, { collapsed: false }).addTo(map);
-
-    // Dodaj merilo
     L.control.scale({imperial: false}).addTo(map);
-
   </script>
 </body>
 </html>
